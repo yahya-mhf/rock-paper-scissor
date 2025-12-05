@@ -1,74 +1,59 @@
+const rockButton = document.querySelector(".rock");
+const paperButton = document.querySelector(".paper");
+const scissorButton = document.querySelector(".scissor");
+const container = document.querySelector(".container");
+
 let humanScore = 0;
 let computerScore = 0;
 
-function getComputerChoice () {
-    let value = Math.floor(Math.random() * 3);
-    if (value === 0){
-        return "rock";
-    }
-    else if (value === 1){
-        return "paper";
-    }
-    else{
-        return "scissors";
-    }
+function getComputerChoice() {
+    const choices = ["rock", "paper", "scissor"];
+    return choices[Math.floor(Math.random() * 3)];
 }
 
-function getHumanChoice() {
-    return prompt("Enter Choice: ")
-}
+function playRound(humanChoice){
+    const computerChoice = getComputerChoice();
 
-function playRound(humanChoice, computerChoice){
-    humanChoice = humanChoice.toLowerCase();
+    if (humanScore >= 5 || computerScore >= 5){return;}
+    
+    let result;
+
     if (humanChoice === computerChoice){
-        console.log("Tie");
+        result = `Tie, Both chose ${humanChoice}`;
     }
-    else{
-        // WIN
-        const winCondition = (humanChoice == "rock" && computerChoice == "scissors") || (humanChoice == "scissors" && computerChoice == "paper") || (humanChoice == "paper" && computerChoice == "rock");
-        if (winCondition){
-            humanScore++;
-            console.log(`You win ${humanChoice} beats ${computerChoice}`)
-        }
-        // LOSE
-        else {
-            computerScore++;
-            console.log(`You Lose ${computerChoice} beats ${humanChoice}`)
-        }
+    else if (
+        (humanChoice === "rock" && computerChoice === "scissor") ||
+        (humanChoice === "paper" && computerChoice === "rock") ||
+        (humanChoice === "scissor" && computerChoice === "paper")
+    ) {
+        humanScore++;
+        result = `Human win this round, ${humanChoice} beats ${computerChoice}`;
+    }
+    else {
+        computerScore++;
+        result = `Computer win this round, ${computerChoice} beats ${humanChoice}`;
+    }
+
+    // add content to the container
+    const divRoundWinner = document.createElement("div");
+    const divScore = document.createElement("div");
+
+    divRoundWinner.textContent = result;
+    divScore.textContent = `Human Score: ${humanScore}\nComputer Score: ${computerScore}`;
+
+    container.innerHTML = ""; // unsure the container updated and not written on top
+    container.appendChild(divRoundWinner);
+    container.appendChild(divScore);
+
+    if (humanScore === 5 || computerScore === 5){
+        const winner = humanScore === 5 ? "Human WIN" : "Computer WIN";
+        const headerGameOver = document.createElement("h2");
+        headerGameOver.textContent = winner;
+        container.appendChild(headerGameOver);
     }
 }
 
-function playRound(humanChoice, computerChoice){
-    humanChoice = humanChoice.toLowerCase();
-    if (humanChoice == computerChoice){
-        console.log("Tie");
-    }
-    else{
-        // WIN
-        const winCondition = (humanChoice == "rock" && computerChoice == "scissors") || (humanChoice == "scissors" && computerChoice == "paper") || (humanChoice == "paper" && computerChoice == "rock");
-        if (winCondition){
-            humanScore++;
-            console.log(`You win ${humanChoice} beats ${computerChoice}`);
-        }
-        // LOSE
-        else {
-            computerScore++;
-            console.log(`You Lose ${computerChoice} beats ${humanChoice}`);
-        }
-    }
-    console.log("------------------");
-    console.log(`Human score: ${humanScore}`);
-    console.log(`Computer score: ${computerScore}`);
-    console.log("------------------");
-}
-
-function playGame (roundNbr){
-    let i = 0;
-    while (i < roundNbr){
-        playRound(getHumanChoice(), getComputerChoice());
-        i++;
-    } 
-}
-
-playGame(5);
-
+// Event Listeners
+rockButton.addEventListener("click", () => playRound("rock"));
+paperButton.addEventListener("click", () => playRound("paper"));
+scissorButton.addEventListener("click", () => playRound("scissor"));
